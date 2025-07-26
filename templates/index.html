@@ -1,0 +1,25 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Creative Agent</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <h1>Creative Agent</h1>
+
+  <form method="post">
+    <textarea name="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
+    <button type="submit">Generate Plan</button>
+  </form>
+
+  {% if plan %}
+    <h2>Generated Plan</h2>
+    <pre>{{ plan | tojson(indent=2) }}</pre>
+  {% elif error %}
+    <p class="error">Error: {{ error }}</p>
+  {% endif %}
+</body>
+</html>
