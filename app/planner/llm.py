@@ -1,21 +1,18 @@
 # app/planner/llm.py
 
 import os
-from openai import OpenAI
 from dotenv import load_dotenv
+import google.generativeai as genai
 
 load_dotenv()
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize the model
+model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
 
-def generate_creative_response(prompt: str, temperature: float = 0.9) -> str:
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a brilliant, creative short-form video director."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=temperature,
-        max_tokens=800
-    )
-    return response.choices[0].message.content.strip()
+def generate_creative_response(prompt: str) -> str:
+    try:
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        return f"Error generating response: {str(e)}"
