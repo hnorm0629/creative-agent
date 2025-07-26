@@ -13,9 +13,16 @@ def get_form(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @router.post("/", response_class=HTMLResponse)
-def submit_form(request: Request, input: str = Form(...)):
+async def submit_form(request: Request, input: str = Form(...)):
     try:
-        plan = plan_from_brief(input)
-        return templates.TemplateResponse("index.html", {"request": request, "plan": plan, "input": input})
+        plan = await plan_from_brief(input)
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "plan": plan.model_dump(),  # 🔧 This avoids JSON serialization errors
+            "input": input
+        })
     except Exception as e:
-        return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "error": str(e)
+        })
