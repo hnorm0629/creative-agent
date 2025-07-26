@@ -101,8 +101,6 @@ creative-agent/
 │   │   └── index.html       # Jinja2 form template
 │   └── static/
 │       └── icons/           # UI icons and assets
-├── tests/
-│   └── test_planner.py
 ├── .env
 ├── .gitignore
 ├── README.md
