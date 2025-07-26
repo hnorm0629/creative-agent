@@ -7,11 +7,18 @@
 
 ## 🚀 Overview
 
-Creative Agent is a FastAPI service that transforms unstructured input into a structured creative plan for short-form video content. It powers GTV’s video generation pipeline by interpreting briefs and turning them into imaginative, audience-ready concepts.
+Creative Agent is a FastAPI-based service that transforms unstructured creative briefs into structured video plans for short-form content. It supports GTV’s internal creative pipeline by generating vivid, imaginative, audience-ready concepts with the help of large language models (LLMs).
+
+Both a JSON API and a simple web UI are provided.
+
+## 📱 Web UI
+
+Accessible at `http://localhost:8000/` after running the app.  
+Submit a creative brief using the form to preview the generated plan.
 
 ## 📦 API
 
-**POST /plans**
+### `POST /plans`
 
 **Request**
 ```json
@@ -20,34 +27,34 @@ Creative Agent is a FastAPI service that transforms unstructured input into a st
 }
 ```
 
-**Response (example)**
+**Response**
 ```json
 {
-  "title": "Zero Gravity // Fast Forward",
-  "concept_summary": "A surreal TikTok skit where a Gen Z runner tests the Acme ZG shoes and literally lifts off the ground...",
-  "hook": "What if shoes could literally defy gravity?",
-  "visual_style": "Hyper-saturated, slow-mo running shots with floating effects.",
-  "tone": "Playful, fast-paced, absurd",
+  "title": "Defy Gravity with Acme ZG",
+  "concept_summary": "Showcase the Acme ZG's lightweight and speed-enhancing features through visually captivating demonstrations of its 'zero-gravity' feel, targeting Gen Z runners on TikTok.",
+  "hook": "Experience running like you're on the moon.",
+  "visual_style": "Fast-paced, dynamic edits, vibrant neon colors, futuristic UI elements, slow-motion shots highlighting the shoe's design and flexibility.",
+  "tone": "Energetic, exciting, aspirational, slightly edgy",
   "intended_platform": "TikTok",
-  "audience": "Gen Z athletes, trend-followers",
-  "hashtags": ["#AcmeZG", "#ZeroGravityRun"],
+  "audience": "Gen Z runners (16–24), fitness enthusiasts, tech-savvy individuals",
+  "hashtags": ["#AcmeZG", "#ZeroGravityRunning", "#FutureofFitness", "#RunFaster", "#FitnessTok"],
   "scene_ideas": [
-    "Opening in a suburban park...",
-    "Friends record as the runner floats...",
-    "Final shot: someone else steals the shoes and floats away."
+    "Close-up shot of the Acme ZG's unique design and materials.",
+    "Runner effortlessly gliding across a track, defying gravity with each stride.",
+    "Slow-motion shot of the shoe's flexible sole absorbing impact."
   ]
 }
 ```
 
 ## 🧠 Planning Logic
 
-The agent uses a structured LLM-driven reasoning chain to:
-- Interpret the brief
-- Brainstorm creative directions
-- Choose the most original concept
-- Expand into a vivid creative plan
+The planning pipeline:
+- Interprets the brief using a templated prompt
+- Calls a generative LLM (Gemini 1.5 Pro)
+- Parses the response into structured JSON
+- Returns a `CreativePlan` with campaign-ready assets
 
-Supports OpenAI or Gemini APIs for text generation.
+Supports Gemini or OpenAI (with minor changes).
 
 ## 🛠 Setup
 
@@ -57,6 +64,15 @@ cd creative-agent
 python3.13 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+Create a `.env` file and add:
+```bash
+GOOGLE_API_KEY=your-api-key-here
+```
+
+Run the development server:
+```bash
 uvicorn app.main:app --reload
 ```
 
@@ -73,24 +89,40 @@ curl -X POST http://localhost:8000/plans \
 ```
 creative-agent/
 ├── app/
-│   ├── main.py              # FastAPI entrypoint
-│   ├── api.py               # Route handlers
-│   ├── models.py            # Pydantic schemas
-│   └── planner/
-│       ├── core.py          # Creative planning pipeline
-│       ├── prompts.py       # Prompt templates
-│       └── llm.py           # LLM API calls
+│   ├── main.py              # App entrypoint, logging, routing
+│   ├── api.py               # API route handler for /plans
+│   ├── ui.py                # HTML form for creative input
+│   ├── models.py            # Pydantic schemas (PlanRequest, CreativePlan)
+│   ├── planner/
+│   │   ├── core.py          # Planning logic (LLM + parsing)
+│   │   ├── prompts.py       # Prompt construction
+│   │   └── llm.py           # Gemini API call
+│   ├── templates/
+│   │   └── index.html       # Jinja2 form template
+│   └── static/
+│       └── icons/           # UI icons and assets
 ├── tests/
 │   └── test_planner.py
+├── .env
 ├── README.md
 ├── .gitignore
 └── requirements.txt
 ```
 
-## ✅ To Do
+## ✅ Completed
 
-- [ ] Implement creative planning logic
-- [ ] Integrate LLM calls (OpenAI/Gemini)
-- [ ] Define output schema
-- [ ] Add test coverage
-- [ ] Finalize API examples in README
+- ✅ Structured API and UI routes
+- ✅ Gemini LLM integration
+- ✅ CreativePlan schema + prompt logic
+- ✅ CLI and Swagger-compatible planner
+- ✅ Markdown JSON parsing + error handling
+- ✅ UI rendering with Jinja2
+- ✅ Logging + error display
+
+## 📌 Remaining Ideas
+
+- [ ] Add prompt examples to UI
+- [ ] Integrate streaming (future)
+- [ ] Improve UI/UX styling
+- [ ] Support multiple model backends
+- [ ] Write more unit tests
