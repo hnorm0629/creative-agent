@@ -14,9 +14,9 @@
   <form method="post" id="creative-form">
     <textarea name="input" id="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
     <div class="button-row">
-      <button type="submit">Generate Plan</button>
+      <button id="submit-btn" type="submit">Generate Plan</button>
       <button id="surprise-btn" type="button" onclick="fetchSurprise()">Surprise Me</button>
-      <button type="button" id="clear-btn">Clear</button>
+      <button id="clear-btn" type="button">Clear</button>
     </div>
   </form>
 
@@ -27,6 +27,7 @@
     <h2>Generated Plan</h2>
     <pre id="output">{{ plan }}</pre>
     <button type="button" id="copy-btn">Copy to Clipboard</button>
+    <button type="button" id="download-btn">Download as JSON</button>
   {% elif error %}
     <p class="error">Error: {{ error }}</p>
   {% endif %}
@@ -38,7 +39,14 @@
       document.getElementById('input').value = '';
       document.getElementById('output')?.remove();
       document.getElementById('copy-btn')?.remove();
+      document.getElementById('download-btn')?.remove();
       setButtonsDisabled(false);
+
+      // Remove the generated plan header
+      const header = document.querySelector('h2');
+      if (header?.textContent === 'Generated Plan') {
+        header.remove();
+      }
     });
 
     // Disable or enable all form buttons
@@ -75,6 +83,29 @@
         navigator.clipboard.writeText(text).then(() => {
           alert("Copied to clipboard!");
         });
+      }
+    });
+
+    // Download as JSON
+    document.getElementById('download-btn')?.addEventListener('click', () => {
+      const outputEl = document.getElementById('output');
+      if (outputEl) {
+        const content = outputEl.innerText;
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        // Generate timestamp
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        const filename = `creative_plan_${timestamp}.json`;
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
     });
 
