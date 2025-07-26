@@ -4,7 +4,7 @@ import asyncio
 from app.logger import logger
 from app.models import CreativePlan
 from app.planner.prompts import creative_plan_prompt
-from app.planner.llm import generate_creative_response
+from app.planner.llm_gemini import generate_creative_response
 
 async def plan_from_brief(user_input: str) -> CreativePlan:
     prompt = creative_plan_prompt(user_input)
