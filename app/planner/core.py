@@ -1,18 +1,16 @@
 # app/planner/core.py
 
+import json
 from app.models import CreativePlan
+from app.planner.prompts import creative_plan_prompt
+from app.planner.llm import generate_creative_response
 
-async def plan_from_brief(user_input: str) -> CreativePlan:
-    # Temporary hardcoded output
-    return CreativePlan(
-        title="Example Title",
-        concept_summary="This is a placeholder concept.",
-        hook="What if shoes could defy gravity?",
-        visual_style="Futuristic, vibrant, slow-mo",
-        tone="Playful",
-        intended_platform="TikTok",
-        audience="Gen Z",
-        hashtags=["#Example"],
-        scene_ideas=["A runner begins floating...", "Everyone reacts..."]
-    )
-    
+def plan_from_brief(user_input: str) -> CreativePlan:
+    prompt = creative_plan_prompt(user_input)
+    response_text = generate_creative_response(prompt)
+
+    try:
+        data = json.loads(response_text)
+        return CreativePlan(**data)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to parse LLM response as JSON: {e}\n\nRaw output:\n{response_text}")
