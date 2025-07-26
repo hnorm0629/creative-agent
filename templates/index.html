@@ -34,27 +34,37 @@
   <script>
     // Clear input/output
     document.getElementById('clear-btn')?.addEventListener('click', () => {
+      setButtonsDisabled(true);
       document.getElementById('input').value = '';
       document.getElementById('output')?.remove();
       document.getElementById('copy-btn')?.remove();
+      setButtonsDisabled(false);
     });
+
+    // Disable or enable all form buttons
+    function setButtonsDisabled(disabled) {
+      document.querySelectorAll('.button-row button').forEach(btn => {
+        btn.disabled = disabled;
+        btn.classList.toggle('disabled', disabled); // Optional class to gray them out
+      });
+    }
 
     // Surprise Me button handler
     async function fetchSurprise() {
       const button = document.getElementById("surprise-btn");
-      button.disabled = true;
+      setButtonsDisabled(true);
       button.textContent = "Loading...";
 
       try {
         const res = await fetch('/surprise');
         const data = await res.json();
-        document.querySelector('textarea[name="input"]').value = data.brief;
+        document.getElementById('input').value = data.brief;
       } catch (err) {
         alert("Failed to load surprise brief!");
         console.error(err);
       } finally {
-        button.disabled = false;
         button.textContent = "Surprise Me";
+        setButtonsDisabled(false);
       }
     }
 
@@ -71,7 +81,9 @@
     // Loading animation on submit
     const form = document.getElementById('creative-form');
     form?.addEventListener('submit', () => {
+      setButtonsDisabled(true);
       document.getElementById('loading').style.display = 'block';
+
       let dotCount = 1;
       const dotsEl = document.getElementById('dots');
       window.loadingInterval = setInterval(() => {

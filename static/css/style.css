@@ -40,6 +40,11 @@ body {
   button:hover {
     background-color: #ddd;
   }
+
+  button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
   
   pre {
     background-color: #111;
