@@ -15,7 +15,7 @@
     <textarea name="input" id="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
     <div class="button-row">
       <button type="submit">Generate Plan</button>
-      <button type="button" id="surprise-btn">Surprise Me</button>
+      <button id="surprise-btn" type="button" onclick="fetchSurprise()">Surprise Me</button>
       <button type="button" id="clear-btn">Clear</button>
     </div>
   </form>
@@ -39,18 +39,24 @@
       document.getElementById('copy-btn')?.remove();
     });
 
-    // Surprise Me
-    const prompts = [
-      "A vintage robot barista competing in a global latte art showdown.",
-      "We're launching a waterproof makeup line for deep-sea mermaids.",
-      "An AI dog trainer for Gen Alpha's robot pets.",
-      "A wearable mood ring that changes your voice to match your vibe.",
-      "The Acme ZG: zero-gravity sneakers for Gen Z TikTok athletes."
-    ];
-    document.getElementById('surprise-btn')?.addEventListener('click', () => {
-      const surprise = prompts[Math.floor(Math.random() * prompts.length)];
-      document.getElementById('input').value = surprise;
-    });
+    // Surprise Me button handler
+    async function fetchSurprise() {
+      const button = document.getElementById("surprise-btn");
+      button.disabled = true;
+      button.textContent = "Loading...";
+
+      try {
+        const res = await fetch('/surprise');
+        const data = await res.json();
+        document.querySelector('textarea[name="input"]').value = data.brief;
+      } catch (err) {
+        alert("Failed to load surprise brief!");
+        console.error(err);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Surprise Me";
+      }
+    }
 
     // Copy to clipboard
     document.getElementById('copy-btn')?.addEventListener('click', () => {

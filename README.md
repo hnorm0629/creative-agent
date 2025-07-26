@@ -104,8 +104,8 @@ creative-agent/
 ├── tests/
 │   └── test_planner.py
 ├── .env
-├── README.md
 ├── .gitignore
+├── README.md
 └── requirements.txt
 ```
 

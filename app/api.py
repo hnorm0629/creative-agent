@@ -3,6 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models import PlanRequest, CreativePlan
 from app.planner.core import plan_from_brief
+from app.planner.llm_openai import generate_surprise_brief
 
 router = APIRouter()
 
@@ -11,6 +12,14 @@ async def generate_plan(request: PlanRequest):
     try:
         plan = await plan_from_brief(request.input)
         return plan
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/surprise")
+async def get_surprise_brief():
+    try:
+        brief = await generate_surprise_brief()
+        return {"brief": brief}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
