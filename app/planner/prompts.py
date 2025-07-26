@@ -23,4 +23,6 @@ Your output should be a JSON object with the following fields:
 - scene_ideas (list of strings)
 
 Respond with *only* the JSON object — no explanation.
+
+Return the result as valid JSON. Make sure all strings (including inside lists) are enclosed in double quotes. Do not include Markdown backticks or a code block.
 """
