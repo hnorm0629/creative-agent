@@ -13,14 +13,11 @@ class CreativePlan(BaseModel):
     title: str = Field(..., description="Catchy title of the video concept")
     concept_summary: str = Field(..., description="Brief summary of the overall idea")
     hook: str = Field(..., description="A compelling or strange premise to grab attention")
+    audience: Optional[str] = Field(None, description="Intended or expected audience")
 
     # Visual tone and aesthetic
     visual_style: str = Field(..., description="Look and feel of the visuals (e.g., film noir, claymation)")
     tone: str = Field(..., description="Emotional tone (e.g., absurd, touching, chaotic)")
-
-    # Metadata
-    intended_platform: Optional[str] = Field(None, description="Optional platform the content is made for")
-    audience: Optional[str] = Field(None, description="Intended or expected audience")
 
     # Structural elements
     scene_ideas: List[str] = Field(..., description="Outline of a few key scenes or moments")

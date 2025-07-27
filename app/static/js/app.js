@@ -239,8 +239,17 @@ const placeholderPrompts = [
   "A jellyfish who does stand-up comedy.",
   "A detective film where the suspect is the moon.",
   "A haunted toaster who wants to be a chef.",
-  "A cowboy lost in a futuristic shopping mall.",
   "Two raccoons run a late-night radio show.",
+  "A pigeon with a GoPro becomes an urban explorer.",
+  "A robot barista solves espresso-related crimes.",
+  "A time-traveling grandma edits Wikipedia for justice.",
+  "A cloud gets jealous of a weather app influencer.",
+  "A sentient vending machine finds love in Tokyo.",
+  "A ghost dog runs agility courses in dreams.",
+  "An AI therapist has an existential crisis mid-session.",
+  "A fashion designer squid takes on Paris Fashion Week.",
+  "A snail enters the world’s fastest car race.",
+  "A lonely traffic cone starts a podcast.",
 ];
 
 let placeholderIndex = 0;

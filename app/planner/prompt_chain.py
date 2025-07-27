@@ -74,6 +74,7 @@ async def creative_plan_chained_prompt(user_input: str) -> str:
     prompt_gen_prompt = (
         f"Based on the selected idea:\n{selected}\n\n"
         "Write a vivid, one-sentence short-form video prompt. Make it cinematic and unpredictable.\n\n"
+        f"The video prompt should tie in to the original user prompt:\n'{user_input}'\n\n"
         "Respond only with the sentence — no preamble, no quotes, no additional commentary."
     )
     gen_prompt = await generate_creative_response(prompt_gen_prompt)
@@ -115,12 +116,17 @@ Do not include critique, ratings, or any commentary — just the paragraph.
     json_plan_prompt = f"""
 You are a wildly creative short-form video concept generator.
 
-Given the following prompt, generate a highly imaginative and vivid creative plan for a video idea.
-The goal is to surprise, delight, and push boundaries of what's expected.
+Given the following user prompt and related story, generate a highly imaginative and vivid creative plan for a video idea.
+The goal is to surprise, delight, and push boundaries of what's expected. The related story should serve as inspiration, but
+make sure that all original components of the user input (for example, characters, action, setting) are preserved in the final
+creative plan. Good luck!
 
 {JSON_FIELDS_PROMPT}
 
-Prompt:
+User Prompt:
+\"\"\"{user_input}\"\"\"
+
+Related Story:
 \"\"\"{final_story}\"\"\"
 
 Respond only with a single valid JSON object.

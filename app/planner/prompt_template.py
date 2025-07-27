@@ -18,7 +18,6 @@ Respond ONLY in JSON format with the following fields:
 - hook: string
 - visual_style: string
 - tone: string
-- intended_platform: string
 - audience: string
 - characters: list of strings
 - inspirations: list of strings (e.g., directors, genres, existing media)

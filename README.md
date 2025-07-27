@@ -45,54 +45,51 @@ Generate a creative plan from a user-input text brief.
 **Request**
 ```json
 {
-  "input": "In an abandoned subway station, an octopus successfully hails and boards a train to become the conductor on a voyage through phosphorescent deep sea worlds reflected in its underwater-themed passenger carriages."
+  "input": "A cowboy from the 1800s Wild West lost in a futuristic shopping mall in 2010."
 }
 ```
 
 **Response**
 ```json
 {
-  "title": "Inky's Dream Express",
-  "concept_summary": "Professor Inky, a dapper clay octopus, conducts a bioluminescent coral train through the dreams of sea creatures, navigating breathtaking ecosystems and fending off leviathanic nightmares that threaten to shatter the ocean's collective consciousness.",
-  "hook": "A clay octopus in a monocle boards a train made of glowing coral. Buckle up, it's about to get weird.",
-  "visual_style": "Stop-motion animation with vibrant, otherworldly lighting and dreamlike textures.  Close-ups on Inky's expressive clay features.",
-  "tone": "Whimsical, adventurous, with a touch of underlying dread.",
-  "intended_platform": "TikTok, Instagram Reels",
-  "audience": "Fans of animation, surreal storytelling, and sea life.",
+  "title": "Cowboy's Cosmic Clawback",
+  "concept_summary": "A time-traveling cowboy must outsmart a tech-savvy teen in a futuristic mall food court to reclaim his stolen compass, which is now powering her augmented reality game and causing reality glitches.",
+  "hook": "When a cowboy from 1888 gets sucked through time into a 2010 mall, his only way back home is trapped inside a claw machine.",
+  "audience": "Gen Z, millennials, fans of sci-fi comedy",
+  "visual_style": "Retro-futuristic Western. Vivid, saturated colors clash with sepia-toned flashbacks. Glitch effects and augmented reality overlays.",
+  "tone": "Humorous, with a touch of surrealism and Western grit.",
   "scene_ideas": [
-    "Inky meticulously polishing his pearl monocle as the coral train arrives.",
-    "A carriage filled with the swirling, colorful dreams of a clownfish, transitioning seamlessly into the ancient migration route visualized by a sea turtle.",
-    "Inky battling a shadowy leviathan tentacle with his conductor's baton.",
-    "Close-up on Inky's worried expression as cracks appear in the coral train.",
-    "The Dream Weaver Fish mending the cracks with glowing threads of bioluminescence."
+    "Caleb lassoing an escalator",
+    "Close-up of compass spinning wildly inside the claw machine",
+    "Sarah battling holographic outlaws projected from her phone, oblivious to Caleb",
+    "Caleb trying to pay for a churro with gold nuggets",
+    "The food court transforming into a digitized prairie landscape due to the compass's power"
   ],
   "characters": [
-    "Professor Inky",
-    "Dream Weaver Fish",
-    "Anglerfish Nightmare",
-    "Narwhal Dreamer",
-    "Clownfish Child"
+    "Caleb (the Cowboy)",
+    "Sarah (the Teen)",
+    "Food Court Manager (exasperated)",
+    "Talking Squirrel (AR character)"
   ],
   "inspirations": [
+    "Back to the Future",
     "Wes Anderson",
-    "Hayao Miyazaki",
-    "Fantastic Mr. Fox",
-    "The Shape of Water",
-    "BioShock"
+    "Michel Gondry",
+    "Spaghetti Westerns",
+    "Vaporwave aesthetic"
   ],
   "dialogue_ideas": [
-    "\"Next stop: the Coral Reef of Reverie!\"",
-    "\"Mind the gap...between dreams.\"",
-    "\"Hold tight, the nightmares are stirring.\"",
-    "\"These dreams... they're unraveling!\""
+    "\"This here contraption is devil magic!\"",
+    "\"OMG, it's a real-life NPC!\"",
+    "\"Can I get a grande latte and a side of existential dread?\"",
+    "\"This ain't my first rodeo... or century.\""
   ],
-  "soundtrack_style": "Ethereal, orchestral score blended with aquatic sound design and echoing foley effects.",
+  "soundtrack_style": "8-bit Western theme with synthwave and banjo elements. Glitch hop sound effects.",
   "foley_fx": [
-    "Coral train chugging",
-    "Water bubbling",
-    "Dream whispers",
-    "Leviathan roars",
-    "Cracking clay"
+    "Spurs clanking on linoleum",
+    "Laser gun sounds mixed with whip cracks",
+    "Dial-up modem connecting sound for time travel",
+    "Cinnamon pretzel crunch"
   ]
 }
 ```
