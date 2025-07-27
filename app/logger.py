@@ -2,12 +2,12 @@
 
 import logging
 
+# Create a module-level logger for the Creative Agent application
 logger = logging.getLogger("creative_agent")
 logger.setLevel(logging.INFO)
 
-# Avoid adding multiple handlers if reloaded
+# Prevent duplicate handlers in case of reload (e.g., during development)
 if not logger.hasHandlers():
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter("[%(asctime)s] %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(message)s"))
+    logger.addHandler(stream_handler)
