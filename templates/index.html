@@ -6,13 +6,36 @@
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <h1 style="display: flex; align-items: center; gap: 0.5rem;">
-    <img src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
-    Creative Agent
-  </h1>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1 style="display: flex; align-items: center; gap: 0.5rem;">
+      <img src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
+      Creative Agent
+    </h1>
 
-  <form method="post" id="creative-form">
-    <textarea name="input" id="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
+    <div>
+      <label for="input-type" style="margin-right: 0.5rem;">Input Type:</label>
+      <select id="input-type">
+        <option value="text" selected>Text</option>
+        <option value="image">Image</option>
+        <option value="video" disabled>Video (coming soon)</option>
+      </select>
+    </div>
+  </div>
+
+  <form method="post" id="creative-form" enctype="multipart/form-data">
+    <!-- Text input block -->
+    <div id="text-input-block">
+      <textarea name="input" id="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
+    </div>
+  
+    <!-- File upload block (initially hidden) -->
+    <div id="file-input-block" style="display: none;">
+      <input type="file" id="file" name="file" accept="image/*">
+      <div id="image-preview" style="margin-top: 1rem;">
+        <img id="preview-img" src="" alt="Preview" style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;">
+      </div>
+    </div>
+
     <div class="button-row">
       <button id="submit-btn" type="submit">Generate Plan</button>
       <button id="surprise-btn" type="button" onclick="fetchSurprise()">Surprise Me</button>
@@ -56,6 +79,43 @@
         btn.classList.toggle('disabled', disabled); // Optional class to gray them out
       });
     }
+
+    const inputTypeSelect = document.getElementById("input-type");
+    const textInputBlock = document.getElementById("text-input-block");
+    const fileInputBlock = document.getElementById("file-input-block");
+
+    inputTypeSelect.addEventListener("change", () => {
+      const type = inputTypeSelect.value;
+      if (type === "text") {
+        textInputBlock.style.display = "block";
+        fileInputBlock.style.display = "none";
+        document.getElementById('surprise-btn').style.display = "inline-block";
+        document.getElementById('clear-btn').style.display = "inline-block";
+      } else if (type === "image" || type === "video") {
+        textInputBlock.style.display = "none";
+        fileInputBlock.style.display = "block";
+        document.getElementById('surprise-btn').style.display = "none";
+        document.getElementById('clear-btn').style.display = "none";
+      }
+    });
+
+    const fileInput = document.getElementById("file");
+    const previewImg = document.getElementById("preview-img");
+
+    fileInput?.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          previewImg.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+      }
+    });
 
     // Surprise Me button handler
     async function fetchSurprise() {
@@ -109,9 +169,10 @@
       }
     });
 
-    // Loading animation on submit
+    // Submit text/image prompt and await results
     const form = document.getElementById('creative-form');
-    form?.addEventListener('submit', () => {
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault(); // prevent default HTML form submission
       setButtonsDisabled(true);
       document.getElementById('loading').style.display = 'block';
 
@@ -121,7 +182,85 @@
         dotCount = (dotCount % 3) + 1;
         dotsEl.textContent = '.'.repeat(dotCount);
       }, 500);
+
+      const inputType = inputTypeSelect.value;
+
+      try {
+        let response;
+
+        if (inputType === 'text') {
+          const text = document.getElementById('input').value;
+          response = await fetch('/plans', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input: text }),
+          });
+        } else if (inputType === 'image') {
+          const file = document.getElementById('file').files[0];
+          if (!file) throw new Error('No file selected.');
+
+          const formData = new FormData();
+          formData.append('file', file);
+
+          response = await fetch('/plans/from-image', {
+            method: 'POST',
+            body: formData,
+          });
+        }
+
+        const plan = await response.json();
+
+        if (!response.ok) {
+          throw new Error(plan.detail || "Unknown error");
+        }
+
+        // Clear any existing output
+        document.getElementById('output')?.remove();
+        document.getElementById('copy-btn')?.remove();
+        document.getElementById('download-btn')?.remove();
+        document.querySelector('h2')?.remove();
+
+        // Display new output
+        const pre = document.createElement('pre');
+        pre.id = 'output';
+        pre.textContent = JSON.stringify(plan, null, 2);
+        document.body.appendChild(document.createElement('h2')).textContent = "Generated Plan";
+        document.body.appendChild(pre);
+
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = "Copy to Clipboard";
+        copyBtn.id = "copy-btn";
+        copyBtn.onclick = () => navigator.clipboard.writeText(pre.textContent);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = "Download as JSON";
+        downloadBtn.id = "download-btn";
+        downloadBtn.onclick = () => {
+          const blob = new Blob([pre.textContent], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `creative_plan_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        };
+        
+        const buttonRow = document.createElement('div');
+        buttonRow.className = 'button-row';  // This class should already have spacing styles
+
+        buttonRow.appendChild(copyBtn);
+        buttonRow.appendChild(downloadBtn);
+        document.body.appendChild(buttonRow);
+      } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+      } finally {
+        setButtonsDisabled(false);
+        clearInterval(window.loadingInterval);
+        document.getElementById('loading').style.display = 'none';
+      }
     });
+
 
     function clearError() {
       const errorEl = document.getElementById('error-message');
