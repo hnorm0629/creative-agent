@@ -1,74 +1,165 @@
 # Creative Agent – GTV Project Trial
 
-**Author**: Hannah Norman  
-**Role**: Member of Technical Staff (Trial)  
-**Duration**: 1 Week  
-**Framework**: FastAPI | **Language**: Python 3.13.3
+Author: Hannah Norman  
+Role: Member of Technical Staff (Trial)  
+Time Spent: 13 Hours  
+Framework: FastAPI | Language: Python 3.13.3
 
 ## 🚀 Overview
 
-Creative Agent is a FastAPI-based service that transforms unstructured creative briefs into structured video plans for short-form content. It supports GTV’s internal creative pipeline by generating vivid, imaginative, audience-ready concepts with the help of large language models (LLMs).
+Creative Agent is a FastAPI-based application that transforms creative briefs into detailed, structured video plans for short-form content. Designed for GTV's internal creative workflows, it generates vivid, unconventional concepts using large language models (LLMs) via a multi-step prompt-chaining pipeline.
 
-Both a JSON API and a simple web UI are provided.
+The app includes both a web UI and JSON API, and supports media input (image or video) for richer brief generation.
 
-## 📱 Web UI
+## 🌐 Web UI
 
-Accessible at `http://localhost:8000/` after running the app.  
-Submit a creative brief using the form to preview the generated plan.
+Access the web interface at [http://localhost:8000/](http://localhost:8000/) after running the server.
 
-## 📦 API
+- Submit a creative brief, image, or video file.
+- View the structured video plan returned by the LLM.
+- UI features include loading animations, surprise prompt generation, and visual feedback.
+
+## 🧠 Prompt Chaining Logic
+
+By default, the planner uses a 6-stage prompt-chaining pipeline:
+
+1. _Essence Extraction_ – distills abstract creative themes  
+2. _Divergent Brainstorming_ – generates five original directions  
+3. _Selection + Justification_ – picks the most creative, cinematic idea  
+4. _Prompt Rewriting_ – crafts a vivid single-sentence pitch 
+5. _Story Expansion_ – builds out a paragraph-long synopsis  
+6. _Self-Critique & Revision_ – improves creativity and imagery  
+7. _JSON Plan Drafting_ – formats final structured output  
+
+Each step is logged with timing breakdowns.
+
+Single-prompt mode is also supported by setting `USE_CHAINING_MODE = False` in `core.py`.
+
+## 📦 API Endpoints
+
+Explore and test these endpoints live at: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ### `POST /plans`
+Generate a creative plan from a user-input text brief.
 
 **Request**
 ```json
 {
-  "input": "We're launching a futuristic running shoe called the Acme ZG. It's lightweight, zero-gravity inspired, and designed for speed. Target audience is Gen Z runners on TikTok."
+  "input": "In an abandoned subway station, an octopus successfully hails and boards a train to become the conductor on a voyage through phosphorescent deep sea worlds reflected in its underwater-themed passenger carriages."
 }
 ```
 
 **Response**
 ```json
 {
-  "title": "Defy Gravity with Acme ZG",
-  "concept_summary": "Showcase the Acme ZG's lightweight and speed-enhancing features through visually captivating demonstrations of its 'zero-gravity' feel, targeting Gen Z runners on TikTok.",
-  "hook": "Experience running like you're on the moon.",
-  "visual_style": "Fast-paced, dynamic edits, vibrant neon colors, futuristic UI elements, slow-motion shots highlighting the shoe's design and flexibility.",
-  "tone": "Energetic, exciting, aspirational, slightly edgy",
-  "intended_platform": "TikTok",
-  "audience": "Gen Z runners (16–24), fitness enthusiasts, tech-savvy individuals",
-  "hashtags": ["#AcmeZG", "#ZeroGravityRunning", "#FutureofFitness", "#RunFaster", "#FitnessTok"],
+  "title": "Inky's Dream Express",
+  "concept_summary": "Professor Inky, a dapper clay octopus, conducts a bioluminescent coral train through the dreams of sea creatures, navigating breathtaking ecosystems and fending off leviathanic nightmares that threaten to shatter the ocean's collective consciousness.",
+  "hook": "A clay octopus in a monocle boards a train made of glowing coral. Buckle up, it's about to get weird.",
+  "visual_style": "Stop-motion animation with vibrant, otherworldly lighting and dreamlike textures.  Close-ups on Inky's expressive clay features.",
+  "tone": "Whimsical, adventurous, with a touch of underlying dread.",
+  "intended_platform": "TikTok, Instagram Reels",
+  "audience": "Fans of animation, surreal storytelling, and sea life.",
   "scene_ideas": [
-    "Close-up shot of the Acme ZG's unique design and materials.",
-    "Runner effortlessly gliding across a track, defying gravity with each stride.",
-    "Slow-motion shot of the shoe's flexible sole absorbing impact."
+    "Inky meticulously polishing his pearl monocle as the coral train arrives.",
+    "A carriage filled with the swirling, colorful dreams of a clownfish, transitioning seamlessly into the ancient migration route visualized by a sea turtle.",
+    "Inky battling a shadowy leviathan tentacle with his conductor's baton.",
+    "Close-up on Inky's worried expression as cracks appear in the coral train.",
+    "The Dream Weaver Fish mending the cracks with glowing threads of bioluminescence."
+  ],
+  "characters": [
+    "Professor Inky",
+    "Dream Weaver Fish",
+    "Anglerfish Nightmare",
+    "Narwhal Dreamer",
+    "Clownfish Child"
+  ],
+  "inspirations": [
+    "Wes Anderson",
+    "Hayao Miyazaki",
+    "Fantastic Mr. Fox",
+    "The Shape of Water",
+    "BioShock"
+  ],
+  "dialogue_ideas": [
+    "\"Next stop: the Coral Reef of Reverie!\"",
+    "\"Mind the gap...between dreams.\"",
+    "\"Hold tight, the nightmares are stirring.\"",
+    "\"These dreams... they're unraveling!\""
+  ],
+  "soundtrack_style": "Ethereal, orchestral score blended with aquatic sound design and echoing foley effects.",
+  "foley_fx": [
+    "Coral train chugging",
+    "Water bubbling",
+    "Dream whispers",
+    "Leviathan roars",
+    "Cracking clay"
   ]
 }
 ```
 
-## 🧠 Planning Logic
+### `POST /plans/from-image`
+Accepts an image (JPG or PNG), captions it using Gemini Vision, and feeds the result into the planner.
 
-The planning pipeline:
-- Interprets the brief using a templated prompt
-- Calls a generative LLM (Gemini 1.5 Pro)
-- Parses the response into structured JSON
-- Returns a `CreativePlan` with campaign-ready assets
+### `POST /plans/from-video`
+Accepts a short video (MP4), captions it using Gemini Vision, and feeds the result into the planner.
 
-Supports Gemini or OpenAI (with minor changes).
+### `GET /surprise`
+Returns a one-sentence weird and unexpected prompt for brainstorming.
 
-## 🛠 Setup
+### `GET /health`
+Basic health check.
 
+## 🧪 Example Requests
+
+You can test the API locally using `curl` commands:
+
+### 🔤 Text Prompt
 ```bash
-git clone https://github.com/YOUR_USERNAME/creative-agent.git
-cd creative-agent
-python3.13 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+curl -X POST http://localhost:8000/plans \
+  -H "Content-Type: application/json" \
+  -d '{"input": "We’re launching a futuristic running shoe called the Acme ZG. It’s lightweight, zero-gravity inspired, and designed for speed. Target audience is Gen Z runners on TikTok."}'
 ```
 
-Create a `.env` file and add:
+### 🖼️ Image Upload
 ```bash
-GOOGLE_API_KEY=your-api-key-here
+curl -X POST http://localhost:8000/plans/from-image \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your_image.jpg"
+```
+
+### 🎥 Video Upload
+```bash
+curl -X POST http://localhost:8000/plans/from-video \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your_clip.mp4"
+```
+
+### 🎲 Get Surprise Prompt
+```bash
+curl http://localhost:8000/surprise
+```
+
+### ❤️ Health Check
+```bash
+curl http://localhost:8000/health
+```
+
+## 🛠 Setup Instructions
+
+```bash
+git clone https://github.com/hnorm0629/creative-agent.git  
+cd creative-agent  
+python3.13 -m venv venv  
+source venv/bin/activate  
+pip install -r requirements.txt  
+```
+
+Create a `.env` file and add your LLM API key(s):
+```bash
+GOOGLE_API_KEY=your-gemini-key  
+OPENAI_API_KEY=your-openai-key  
 ```
 
 Run the development server:
@@ -76,51 +167,51 @@ Run the development server:
 uvicorn app.main:app --reload
 ```
 
-## 🧪 Sample Test
-
-```bash
-curl -X POST http://localhost:8000/plans \
-  -H "Content-Type: application/json" \
-  -d '{"input": "We’re launching a futuristic running shoe..."}'
-```
+Then visit [http://localhost:8000/](http://localhost:8000/) in your browser.
 
 ## 📁 Project Structure
-
 ```
-creative-agent/
-├── app/
-│   ├── main.py              # App entrypoint, logging, routing
-│   ├── api.py               # API route handler for /plans
-│   ├── ui.py                # HTML form for creative input
-│   ├── models.py            # Pydantic schemas (PlanRequest, CreativePlan)
-│   ├── planner/
-│   │   ├── core.py          # Planning logic (LLM + parsing)
-│   │   ├── prompts.py       # Prompt construction
-│   │   └── llm.py           # Gemini API call
-│   ├── templates/
-│   │   └── index.html       # Jinja2 form template
-│   └── static/
-│       └── icons/           # UI icons and assets
-├── .env
-├── .gitignore
-├── README.md
-└── requirements.txt
+creative-agent/  
+├── app/  
+│   ├── main.py                   # App entrypoint and router inclusion  
+│   ├── api.py                    # API route definitions  
+│   ├── ui.py                     # Jinja2-based UI handler  
+│   ├── models.py                 # Pydantic schemas  
+│   ├── logger.py                 # Logging setup  
+│   ├── planner/  
+│   │   ├── core.py               # Core planning logic and JSON parsing  
+│   │   ├── prompt_chain.py       # Multi-step prompt pipeline  
+│   │   ├── prompt_template.py    # One-shot prompt logic 
+│   │   ├── llm_openai.py         # OpenAI LLM wrapper  
+│   │   ├── llm_gemini.py         # Gemini LLM wrapper  
+│   │   ├── image_captioning.py   # Gemini vision model for image input  
+│   │   └── video_captioning.py   # Gemini vision model for video input  
+│   ├── templates/  
+│   │   └── index.html            # Main frontend template  
+│   └── static/  
+│       ├── css/style.css         # App-wide styling  
+│       ├── js/app.js             # UI interaction and fetch logic  
+│       └── icons/                # Robot icons and assets  
+├── .env  
+├── .gitignore  
+├── requirements.txt  
+└── README.md  
 ```
 
-## ✅ Completed
+## ✅ Features Completed
 
-- ✅ Structured API and UI routes
-- ✅ Gemini LLM integration
-- ✅ CreativePlan schema + prompt logic
-- ✅ CLI and Swagger-compatible planner
-- ✅ Markdown JSON parsing + error handling
-- ✅ UI rendering with Jinja2
-- ✅ Logging + error display
+- Modular FastAPI backend  
+- LLM prompt chaining (Gemini 1.5 Pro)  
+- OpenAI surprise brief generator  
+- Image and video captioning  
+- Structured JSON output via Pydantic  
+- Functional CLI and Swagger usage  
+- Fully styled web UI with upload preview and interaction  
+- Error handling, logging, and UI feedback  
 
-## 📌 Remaining Ideas
+## 📌 Future Opportunities
 
-- [ ] Add prompt examples to UI
-- [ ] Integrate streaming (future)
-- [ ] Improve UI/UX styling
-- [ ] Support multiple model backends
-- [ ] Write more unit tests
+- Add more model options (Claude, Mistral, etc.)  
+- Add web streaming support for multi-turn generation
+- Add user presets or creative “modes”  
+- Write unit tests
