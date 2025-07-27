@@ -1,5 +1,7 @@
+/* app/static/css/style.css */
+
 :root {
-  --accent: #d27aff; /* <— new! define accent color here */
+  --accent: #d27aff; /* define accent color here */
 }
 
 body {
@@ -13,11 +15,11 @@ body {
 
 h1, h2 {
   color: #fff;
-  transition: color 0.3s ease; /* <— optional flair */
+  transition: color 0.3s ease;
 }
 
 h1:hover, h2:hover {
-  color: var(--accent); /* <— header hover effect */
+  color: var(--accent);
 }
 
 textarea {
@@ -37,18 +39,18 @@ textarea {
 }
 
 button {
-  background-color: transparent; /* <— updated for style consistency */
+  background-color: transparent;
   color: #fff;
   padding: 0.5rem 1rem;
   font-weight: bold;
-  border: 1px solid #fff; /* <— added border for contrast */
+  border: 1px solid #fff;
   cursor: pointer;
   margin-top: 0.5rem;
-  transition: all 0.2s ease; /* <— smooth hover effect */
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  background-color: #111; /* subtle contrast */
+  background-color: #111;
   border-color: var(--accent);
   color: var(--accent);
   box-shadow: 0 0 5px var(--accent);
@@ -72,7 +74,7 @@ pre {
   color: #fff;
   max-height: 500px;
   overflow: auto;
-  box-shadow: 0 0 10px rgba(210, 122, 255, 0.1); /* subtle purple glow */
+  box-shadow: 0 0 10px rgba(210, 122, 255, 0.1);
   transition: box-shadow 0.3s ease;
 }
 
@@ -88,13 +90,12 @@ pre:hover {
 }
 
 .json-key {
-  color: #d27aff; /* purple for keys */
+  color: #d27aff;
 }
 
 .json-string {
-  color: #fff; /* mint for string values */
+  color: #fff;
 }
-
 
 .error {
   color: #ff5252;
@@ -120,22 +121,10 @@ pre:hover {
 }
 
 @keyframes surprise-pop {
-  0% {
-    transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 0px var(--accent));
-  }
-  20% {
-    transform: scale(1.15) rotate(3deg);
-    filter: drop-shadow(0 0 6px var(--accent));
-  }
-  50% {
-    transform: scale(0.98) rotate(-3deg);
-    filter: drop-shadow(0 0 10px var(--accent));
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 0px var(--accent));
-  }
+  0%   { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px var(--accent)); }
+  20%  { transform: scale(1.15) rotate(3deg); filter: drop-shadow(0 0 6px var(--accent)); }
+  50%  { transform: scale(0.98) rotate(-3deg); filter: drop-shadow(0 0 10px var(--accent)); }
+  100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px var(--accent)); }
 }
 
 .robot-surprise {
