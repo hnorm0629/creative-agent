@@ -8,7 +8,9 @@
 <body>
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <h1 style="display: flex; align-items: center; gap: 0.5rem;">
-      <img id="robot-icon" src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
+      <div id="robot-wrapper" style="position: relative;">
+        <img id="robot-icon" src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
+      </div>
       Creative Agent
     </h1>
 
@@ -419,6 +421,38 @@
         }
       );
     }
+
+    let clickCount = 0;
+    let clickTimer = null;
+
+    const robotIcon = document.getElementById("robot-icon");
+
+    robotIcon.addEventListener("click", () => {
+      clickCount++;
+
+      // Reset count if they wait too long between clicks
+      if (clickTimer) clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => {
+        clickCount = 0;
+      }, 1000); // must click 5 times within 1s total
+
+      if (clickCount === 5) {
+        toggleRobotIcon();
+        clickCount = 0;
+      }
+    });
+
+    function toggleRobotIcon() {
+      const currentSrc = robotIcon.getAttribute("src");
+      const base = "/static/icons/";
+
+      const newSrc = currentSrc.includes("robot_brother.svg")
+        ? base + "robot.svg"
+        : base + "robot_brother.svg";
+
+      robotIcon.setAttribute("src", newSrc);
+    }
+
   </script>
 </body>
 </html>
