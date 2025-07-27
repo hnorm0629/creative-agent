@@ -5,6 +5,7 @@ from app.logger import logger
 from app.models import CreativePlan
 from app.planner.prompts import creative_plan_prompt
 from app.planner.llm_gemini import generate_creative_response
+from pydantic import ValidationError
 
 async def plan_from_brief(user_input: str) -> CreativePlan:
     prompt = creative_plan_prompt(user_input)
@@ -21,6 +22,9 @@ async def plan_from_brief(user_input: str) -> CreativePlan:
     except json.JSONDecodeError as e:
         logger.error("Failed to parse LLM response as JSON", exc_info=True)
         raise ValueError(f"Failed to parse LLM response as JSON: {e}\n\nRaw output:\n{response_text}")
+    except ValidationError as ve:
+        logger.error("Parsed JSON but validation against CreativePlan failed", exc_info=True)
+        raise ValueError(f"Validation error: {ve}\n\nParsed JSON:\n{data}")
 
 # Sync wrapper for CLI usage
 def plan_from_brief_sync(user_input: str) -> CreativePlan:
