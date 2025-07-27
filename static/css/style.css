@@ -1,62 +1,92 @@
-body {
-    background-color: #000;
-    color: #fff;
-    font-family: sans-serif;
-    padding: 2rem;
-    max-width: 800px;
-    margin: auto;
-  }
-  
-  h1, h2 {
-    color: #fff;
-  }
-  
-  textarea {
-    width: 100%;
-    background-color: #111;
-    color: #fff;
-    border: 1px solid #444;
-    padding: 1rem;
-    font-size: 1rem;
-  }
-  
-  .button-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    flex-wrap: wrap;
-  }
-  
-  button {
-    background-color: #fff;
-    color: #000;
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    margin-top: 0.5rem;
-  }
-  
-  button:hover {
-    background-color: #ddd;
-  }
+:root {
+  --accent: #d27aff; /* <— new! define accent color here */
+}
 
-  button.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  pre {
-    background-color: #111;
-    padding: 1rem;
-    border: 1px solid #444;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin-top: 1rem;
-  }
-  
-  .error {
-    color: #ff5252;
-    margin-top: 1rem;
-  }
-  
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: sans-serif;
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+h1, h2 {
+  color: #fff;
+  transition: color 0.3s ease; /* <— optional flair */
+}
+
+h1:hover, h2:hover {
+  color: var(--accent); /* <— header hover effect */
+}
+
+textarea {
+  width: 100%;
+  background-color: #111;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+button {
+  background-color: transparent; /* <— updated for style consistency */
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border: 1px solid #fff; /* <— added border for contrast */
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease; /* <— smooth hover effect */
+}
+
+button:hover {
+  background-color: #111; /* subtle contrast */
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+}
+
+button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+pre {
+  background-color: #111;
+  padding: 1rem;
+  border: 1px solid #444;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-top: 1rem;
+}
+
+.error {
+  color: #ff5252;
+  margin-top: 1rem;
+}
+
+@keyframes glow-jiggle-loop {
+  0%   { transform: translate(0, 0) scale(1); filter: drop-shadow(0 0 0 var(--accent)); }
+  10%  { transform: translate(-1px, 2px) scale(1.01); filter: drop-shadow(0 0 4px var(--accent)); }
+  20%  { transform: translate(2px, -1px) scale(1.03); filter: drop-shadow(0 0 6px var(--accent)); }
+  30%  { transform: translate(-2px, -1px) scale(1.02); filter: drop-shadow(0 0 8px var(--accent)); }
+  40%  { transform: translate(1px, 2px) scale(1.04); filter: drop-shadow(0 0 10px var(--accent)); }
+  50%  { transform: translate(-1px, 1px) scale(1.03); filter: drop-shadow(0 0 8px var(--accent)); }
+  60%  { transform: translate(2px, -2px) scale(1.01); filter: drop-shadow(0 0 6px var(--accent)); }
+  70%  { transform: translate(1px, 1px) scale(1.02); filter: drop-shadow(0 0 7px var(--accent)); }
+  80%  { transform: translate(-2px, 2px) scale(1.03); filter: drop-shadow(0 0 9px var(--accent)); }
+  90%  { transform: translate(0px, -1px) scale(1.01); filter: drop-shadow(0 0 5px var(--accent)); }
+  100% { transform: translate(0, 0) scale(1); filter: drop-shadow(0 0 4px var(--accent)); }
+}
+
+.robot-hover-animate {
+  animation: glow-jiggle-loop 2s ease-in-out infinite;
+}

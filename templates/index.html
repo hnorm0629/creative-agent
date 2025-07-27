@@ -8,7 +8,7 @@
 <body>
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <h1 style="display: flex; align-items: center; gap: 0.5rem;">
-      <img src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
+      <img id="robot-icon" src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
       Creative Agent
     </h1>
 
@@ -283,6 +283,17 @@
     const buttons = document.querySelectorAll('button');
     buttons.forEach(btn => {
       btn.addEventListener('click', clearError);
+    });
+
+    const genBtn = document.getElementById('submit-btn');
+    const robot = document.getElementById('robot-icon');
+
+    genBtn?.addEventListener('mouseenter', () => {
+      robot.classList.add('robot-hover-animate');
+    });
+
+    genBtn?.addEventListener('mouseleave', () => {
+      robot.classList.remove('robot-hover-animate');
     });
   </script>
 </body>
