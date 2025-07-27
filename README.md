@@ -2,7 +2,7 @@
 
 Author: Hannah Norman  
 Role: Member of Technical Staff (Trial)  
-Time Spent: 13 Hours  
+Time Spent: 14 Hours  
 Framework: FastAPI | Language: Python 3.13.3
 
 ## 🚀 Overview
@@ -169,6 +169,15 @@ uvicorn app.main:app --reload
 
 Then visit [http://localhost:8000/](http://localhost:8000/) in your browser.
 
+## ✏️ Tests
+
+A minimal `test_planner.py` file under `app/tests/` demonstrates use of the `pytest` framework to verify planner output structure.
+
+Run the tests:
+```bash
+pytest
+```
+
 ## 📁 Project Structure
 ```
 creative-agent/  
@@ -186,12 +195,14 @@ creative-agent/
 │   │   ├── llm_gemini.py         # Gemini LLM wrapper  
 │   │   ├── image_captioning.py   # Gemini vision model for image input  
 │   │   └── video_captioning.py   # Gemini vision model for video input  
+│   ├── static/  
+│   │   ├── css/style.css         # App-wide styling  
+│   │   ├── js/app.js             # UI interaction and fetch logic  
+│   │   └── icons/                # Robot icons and assets  
 │   ├── templates/  
 │   │   └── index.html            # Main frontend template  
-│   └── static/  
-│       ├── css/style.css         # App-wide styling  
-│       ├── js/app.js             # UI interaction and fetch logic  
-│       └── icons/                # Robot icons and assets  
+│   └── tests/
+│       └── test_planner.py       # Basic unit tests  
 ├── .env  
 ├── .gitignore  
 ├── requirements.txt  
@@ -208,10 +219,10 @@ creative-agent/
 - Functional CLI and Swagger usage  
 - Fully styled web UI with upload preview and interaction  
 - Error handling, logging, and UI feedback  
+- Basic test coverage
 
 ## 📌 Future Opportunities
 
 - Add more model options (Claude, Mistral, etc.)  
 - Add web streaming support for multi-turn generation
 - Add user presets or creative “modes”  
-- Write unit tests

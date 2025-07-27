@@ -14,7 +14,7 @@ from app.logger import logger
 from app.planner.core import plan_from_brief
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/", response_class=HTMLResponse)
 def get_form(request: Request):

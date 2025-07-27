@@ -19,7 +19,7 @@ app = FastAPI(
 )
 
 # Mount static assets (CSS, icons, etc.)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Include API and UI routes
 app.include_router(api_router)
