@@ -3,7 +3,7 @@ import re
 import asyncio
 from app.logger import logger
 from app.models import CreativePlan
-from app.planner.prompts import creative_plan_prompt
+from app.planner.prompt_template import creative_plan_prompt
 from app.planner.prompt_chain import creative_plan_chained_prompt
 from app.planner.llm_gemini import generate_creative_response
 from pydantic import ValidationError
