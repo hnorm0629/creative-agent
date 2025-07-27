@@ -24,7 +24,10 @@
   <form method="post" id="creative-form" enctype="multipart/form-data">
     <!-- Text input block -->
     <div id="text-input-block">
-      <textarea name="input" id="input" rows="5" placeholder="Enter your creative brief...">{{ input or '' }}</textarea>
+      <p style="margin-bottom: 0.25rem; font-size: 0.95rem; color: #ccc;">
+        Enter your creative brief:
+      </p>
+      <textarea name="input" id="input" rows="5" placeholder="">{{ input or '' }}</textarea>
     </div>
   
     <!-- File upload block (initially hidden) -->
@@ -295,6 +298,37 @@
     genBtn?.addEventListener('mouseleave', () => {
       robot.classList.remove('robot-hover-animate');
     });
+
+    // Rotating placeholder prompts
+    const placeholderPrompts = [
+      "A jellyfish who does stand-up comedy.",
+      "A detective film where the suspect is the moon.",
+      "A haunted toaster who wants to be a chef.",
+      "A cowboy lost in a futuristic shopping mall.",
+      "Two raccoons run a late-night radio show.",
+      "A silent film about screaming goats.",
+      "An opera about sentient toast.",
+      "A love story between a traffic light and a GPS.",
+      "A villain origin story for a garden hose.",
+      "A documentary made by squirrels.",
+      "An ad for time-traveling cereal.",
+      "A stop-motion noir about shadows in love.",
+      "A claymation interview with a forgotten emoji.",
+      "An animated remix of Romeo and Juliet... on Mars."
+    ];
+
+    const inputField = document.getElementById('input');
+    let placeholderIndex = 0;
+
+    function rotatePlaceholder() {
+      if (inputTypeSelect.value === "text") {
+        inputField.placeholder = placeholderPrompts[placeholderIndex];
+        placeholderIndex = (placeholderIndex + 1) % placeholderPrompts.length;
+      }
+    }
+
+    rotatePlaceholder();
+    setInterval(rotatePlaceholder, 5000); // rotate every 4 seconds
   </script>
 </body>
 </html>
