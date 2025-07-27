@@ -1,3 +1,5 @@
+<!-- app/templates/index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,453 +8,65 @@
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1 style="display: flex; align-items: center; gap: 0.5rem;">
-      <div id="robot-wrapper" style="position: relative;">
+  <!-- Header -->
+  <header class="header-bar">
+    <h1 class="app-title">
+      <span id="robot-wrapper">
         <img id="robot-icon" src="/static/icons/robot.svg" alt="Creative Agent" width="32" height="32">
-      </div>
+      </span>
       Creative Agent
     </h1>
-
-    <div>
+    <div class="input-type-selector" style="margin-bottom: 1rem;">
       <label for="input-type" style="margin-right: 0.5rem;">Input Type:</label>
       <select id="input-type">
         <option value="text" selected>Text</option>
         <option value="media">Image or Video</option>
       </select>
     </div>
-  </div>
+  </header>
 
-  <form method="post" id="creative-form" enctype="multipart/form-data">
-    <!-- Text input block -->
-    <div id="text-input-block">
-      <p style="margin-bottom: 0.25rem; font-size: 0.95rem; color: #fff;">
-        Enter your creative brief:
-      </p>
-      <textarea name="input" id="input" rows="5" placeholder="">{{ input or '' }}</textarea>
-    </div>
-  
-    <!-- File upload block (initially hidden) -->
-    <div id="file-input-block" style="display: none;">
-      <input type="file" id="file" name="file" accept="image/*,video/*">
-      <div id="image-preview" style="margin-top: 1rem;">
-        <img id="preview-img" src="" alt="Preview" style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;">
+  <!-- Form -->
+  <main>
+    <form method="post" id="creative-form" enctype="multipart/form-data">
+
+      <!-- Text input block -->
+      <section id="text-input-block">
+        <label for="input">Enter your creative brief:</label>
+        <textarea name="input" id="input" rows="5" placeholder="">{{ input or '' }}</textarea>
+      </section>
+
+      <!-- File upload block -->
+      <section id="file-input-block" style="display: none;">
+        <input type="file" id="file" name="file" accept="image/*,video/*">
+        <div class="preview-block">
+          <img id="preview-img" style="display: none;">
+          <video id="preview-video" controls style="display: none;"></video>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <div class="button-row">
+        <button id="submit-btn" type="submit">Generate Plan</button>
+        <button id="surprise-btn" type="button">Surprise Me</button>
+        <button id="clear-btn" type="button">Clear</button>
       </div>
-      <div id="video-preview" style="margin-top: 1rem;"> <!-- ADDED -->
-        <video id="preview-video" controls style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;"></video>
-      </div>
-    </div>
-
-    <div class="button-row">
-      <button id="submit-btn" type="submit">Generate Plan</button>
-      <button id="surprise-btn" type="button" onclick="fetchSurprise()">Surprise Me</button>
-      <button id="clear-btn" type="button">Clear</button>
-    </div>
-  </form>
-
-  <!-- Loading animation -->
-  <div id="loading" style="display: none; margin-top: 1rem;">Thinking<span id="dots">.</span></div>
-
-  {% if plan %}
-    <h2>Generated Plan</h2>
-    <pre id="output">{{ plan }}</pre>
-    <button type="button" id="copy-btn">Copy to Clipboard</button>
-    <button type="button" id="download-btn">Download as JSON</button>
-  {% elif error %}
-    <p class="error">Error: {{ error }}</p>
-  {% endif %}
-
-  <script>
-    // Clear input/output
-    document.getElementById('clear-btn')?.addEventListener('click', () => {
-      setButtonsDisabled(true);
-      document.getElementById('input').value = '';
-      document.getElementById('output')?.remove();
-      document.getElementById('copy-btn')?.remove();
-      document.getElementById('download-btn')?.remove();
-      setButtonsDisabled(false);
-
-      // Remove the generated plan header
-      const header = document.querySelector('h2');
-      if (header?.textContent === 'Generated Plan') {
-        header.remove();
-      }
-    });
-
-    // Disable or enable all form buttons
-    function setButtonsDisabled(disabled) {
-      document.querySelectorAll('.button-row button').forEach(btn => {
-        btn.disabled = disabled;
-        btn.classList.toggle('disabled', disabled); // Optional class to gray them out
-      });
-    }
-
-    const inputTypeSelect = document.getElementById("input-type");
-    const textInputBlock = document.getElementById("text-input-block");
-    const fileInputBlock = document.getElementById("file-input-block");
-
-    inputTypeSelect.addEventListener("change", () => {
-      const type = inputTypeSelect.value;
-      if (type === "text") {
-        textInputBlock.style.display = "block";
-        fileInputBlock.style.display = "none";
-        document.getElementById('surprise-btn').style.display = "inline-block";
-        document.getElementById('clear-btn').style.display = "inline-block";
-      } else if (type === "media") {
-        textInputBlock.style.display = "none";
-        fileInputBlock.style.display = "block";
-        document.getElementById('surprise-btn').style.display = "none";
-        document.getElementById('clear-btn').style.display = "none";
-      }
-    });
-
-    const fileInput = document.getElementById("file");
-    const previewImg = document.getElementById("preview-img");
-    const previewVideo = document.getElementById("preview-video");
-
-    fileInput?.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      // Hide both previews initially
-      previewImg.style.display = "none";
-      previewVideo.style.display = "none";
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        if (file.type.startsWith("image/")) {
-          previewImg.src = e.target.result;
-          previewImg.style.display = "block";
-        } else if (file.type.startsWith("video/")) {
-          previewVideo.src = e.target.result;
-          previewVideo.style.display = "block";
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Surprise Me button handler
-    async function fetchSurprise() {
-      const button = document.getElementById("surprise-btn");
-      setButtonsDisabled(true);
-      button.textContent = "Loading...";
-
-      try {
-        const res = await fetch('/surprise');
-        const data = await res.json();
-        document.getElementById('input').value = data.brief;
-
-        robot.classList.add("robot-surprise");
-        setTimeout(() => robot.classList.remove("robot-surprise"), 600);
-      } catch (err) {
-        alert("Failed to load surprise brief!");
-        console.error(err);
-      } finally {
-        button.textContent = "Surprise Me";
-        setButtonsDisabled(false);
-      }
-    }
-
-    // Copy to clipboard
-    document.getElementById('copy-btn')?.addEventListener('click', () => {
-      const text = document.getElementById('output')?.innerText;
-      if (text) {
-        navigator.clipboard.writeText(text).then(() => {
-          alert("Copied to clipboard!");
-        });
-      }
-    });
-
-    // Download as JSON
-    document.getElementById('download-btn')?.addEventListener('click', () => {
-      const outputEl = document.getElementById('output');
-      if (outputEl) {
-        const content = outputEl.innerText;
-        const blob = new Blob([content], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-
-        // Generate timestamp
-        const now = new Date();
-        const pad = (n) => n.toString().padStart(2, '0');
-
-        const year = now.getFullYear();
-        const month = pad(now.getMonth() + 1); // Months are 0-indexed
-        const day = pad(now.getDate());
-        const hours = pad(now.getHours());
-        const minutes = pad(now.getMinutes());
-        const seconds = pad(now.getSeconds());
-
-        const timestamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-        const filename = `creative_plan_${timestamp}.json`;
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }
-    });
-
-    // Submit text/image prompt and await results
-    const form = document.getElementById('creative-form');
-    form?.addEventListener('submit', async (e) => {
-      e.preventDefault(); // prevent default HTML form submission
-      setButtonsDisabled(true);
-      document.getElementById('loading').style.display = 'block';
-
-      let dotCount = 1;
-      const dotsEl = document.getElementById('dots');
-      window.loadingInterval = setInterval(() => {
-        dotCount = (dotCount % 3) + 1;
-        dotsEl.textContent = '.'.repeat(dotCount);
-      }, 500);
-
-      const inputType = inputTypeSelect.value;
-
-      try {
-        let response;
-
-        if (inputType === 'text') {
-          const text = document.getElementById('input').value;
-          response = await fetch('/plans', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input: text }),
-          });
-        } else if (inputType === 'media') {
-          const file = document.getElementById('file').files[0];
-          if (!file) throw new Error('No file selected.');
-
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const endpoint = inputType === 'image' ? '/plans/from-image' : '/plans/from-video'; // CHANGED
-          response = await fetch(endpoint, {
-            method: 'POST',
-            body: formData,
-          });
-        }
-
-        const plan = await response.json();
-        window.rawJsonPlan = plan;
-
-        if (!response.ok) {
-          throw new Error(plan.detail || "Unknown error");
-        }
-
-        // Clear any existing output
-        document.getElementById('output')?.remove();
-        document.getElementById('copy-btn')?.remove();
-        document.getElementById('download-btn')?.remove();
-        document.querySelector('h2')?.remove();
-
-        // Display new output
-        const pre = document.createElement('pre');
-        pre.id = 'output';
-
-        const code = document.createElement('code');
-        code.innerHTML = syntaxHighlight(plan); // ← keep the highlighting
-        pre.appendChild(code);
-
-        document.body.appendChild(document.createElement('h2')).textContent = "Generated Plan";
-        document.body.appendChild(pre);
-
-        const copyBtn = document.createElement('button');
-        copyBtn.textContent = "Copy to Clipboard";
-        copyBtn.id = "copy-btn";
-        copyBtn.onclick = () => {
-          const jsonString = JSON.stringify(window.rawJsonPlan, null, 2);
-          navigator.clipboard.writeText(jsonString).then(() => {
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = "✅ Copied!";
-            setTimeout(() => {
-              copyBtn.textContent = originalText;
-            }, 1200);
-          });
-        };
-
-        const downloadBtn = document.createElement('button');
-        downloadBtn.textContent = "Download as JSON";
-        downloadBtn.id = "download-btn";
-        downloadBtn.onclick = () => {
-          const jsonString = JSON.stringify(window.rawJsonPlan, null, 2);
-          const blob = new Blob([jsonString], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `creative_plan_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
-
-          navigator.clipboard.writeText(pre.textContent).then(() => {
-            const originalText = downloadBtn.textContent;
-            downloadBtn.textContent = "✅ Downloaded!";
-            setTimeout(() => {
-              downloadBtn.textContent = originalText;
-            }, 1200);
-          });
-        };
-        
-        const buttonRow = document.createElement('div');
-        buttonRow.className = 'button-row';  // This class should already have spacing styles
-
-        buttonRow.appendChild(copyBtn);
-        buttonRow.appendChild(downloadBtn);
-        document.body.appendChild(buttonRow);
-      } catch (err) {
-        alert("Error: " + err.message);
-        console.error(err);
-      } finally {
-        setButtonsDisabled(false);
-        clearInterval(window.loadingInterval);
-        document.getElementById('loading').style.display = 'none';
-      }
-    });
-
-
-    function clearError() {
-      const errorEl = document.getElementById('error-message');
-      if (errorEl) {
-        errorEl.remove(); // or: errorEl.style.display = "none";
-      }
-    }
-
-    // Attach to all interactive buttons
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', clearError);
-    });
-
-    const genBtn = document.getElementById('submit-btn');
-    const robot = document.getElementById('robot-icon');
-
-    genBtn?.addEventListener('mouseenter', () => {
-      robot.classList.add('robot-hover-animate');
-    });
-
-    genBtn?.addEventListener('mouseleave', () => {
-      robot.classList.remove('robot-hover-animate');
-    });
-
-    // Rotating placeholder prompts
-    const placeholderPrompts = [
-      "A jellyfish who does stand-up comedy.",
-      "A detective film where the suspect is the moon.",
-      "A haunted toaster who wants to be a chef.",
-      "A cowboy lost in a futuristic shopping mall.",
-      "Two raccoons run a late-night radio show.",
-      "A silent film about screaming goats.",
-      "An opera about sentient toast.",
-      "A love story between a traffic light and a GPS.",
-      "A villain origin story for a garden hose.",
-      "A documentary made by squirrels.",
-      "An ad for time-traveling cereal.",
-      "A stop-motion noir about shadows in love.",
-      "A claymation interview with a forgotten emoji.",
-      "An animated remix of Romeo and Juliet... on Mars."
-    ];
-
-    const inputField = document.getElementById('input');
-    let placeholderIndex = 0;
-
-    function rotatePlaceholder() {
-      if (inputTypeSelect.value === "text") {
-        inputField.placeholder = placeholderPrompts[placeholderIndex];
-        placeholderIndex = (placeholderIndex + 1) % placeholderPrompts.length;
-      }
-    }
-
-    rotatePlaceholder();
-    setInterval(rotatePlaceholder, 5000); // rotate every 4 seconds
-
-    function syntaxHighlight(json) {
-      if (typeof json != "string") {
-        json = JSON.stringify(json, null, 2);
-      }
-
-      json = json
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-      return json.replace(
-        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?)/g,
-        (match) => {
-          let cls = "json-number";
-
-          if (/^"/.test(match)) {
-            const isKey = /:$/.test(match);
-
-            if (isKey) {
-              cls = "json-key";
-
-              // Extract the key name (strip quotes and colon)
-              const keyName = match.replace(/"|:|/g, "").toLowerCase();
-
-              // Add emojis for specific keys
-              let emoji = "";
-              if (keyName === "title") emoji = "🏷️ ";
-              else if (keyName === "concept_summary") emoji = "🧠 ";
-              else if (keyName === "hook") emoji = "🎯 ";
-              else if (keyName === "visual_style") emoji = "🎨 ";
-              else if (keyName === "tone") emoji = "🎭 ";
-              else if (keyName === "intended_platform") emoji = "📱 ";
-              else if (keyName === "audience") emoji = "👥 ";
-              else if (keyName === "scene_ideas") emoji = "🎬 ";
-              else if (keyName === "characters") emoji = "🧍‍♂️ ";
-              else if (keyName === "inspirations") emoji = "🌟 ";
-              else if (keyName === "dialogue_ideas") emoji = "💬 ";
-              else if (keyName === "soundtrack_style") emoji = "🎧 ";
-              else if (keyName === "foley_fx") emoji = "🔊 ";
-
-              return `<span class="${cls}">${emoji}${match}</span>`;
-            } else {
-              cls = "json-string";
-            }
-          } else if (/true|false/.test(match)) {
-            cls = "json-boolean";
-          } else if (/null/.test(match)) {
-            cls = "json-boolean";
-          }
-
-          return `<span class="${cls}">${match}</span>`;
-        }
-      );
-    }
-
-    let clickCount = 0;
-    let clickTimer = null;
-
-    const robotIcon = document.getElementById("robot-icon");
-
-    robotIcon.addEventListener("click", () => {
-      clickCount++;
-
-      // Reset count if they wait too long between clicks
-      if (clickTimer) clearTimeout(clickTimer);
-      clickTimer = setTimeout(() => {
-        clickCount = 0;
-      }, 1000); // must click 5 times within 1s total
-
-      if (clickCount === 5) {
-        toggleRobotIcon();
-        clickCount = 0;
-      }
-    });
-
-    function toggleRobotIcon() {
-      const currentSrc = robotIcon.getAttribute("src");
-      const base = "/static/icons/";
-
-      const newSrc = currentSrc.includes("robot_brother.svg")
-        ? base + "robot.svg"
-        : base + "robot_brother.svg";
-
-      robotIcon.setAttribute("src", newSrc);
-    }
-
-  </script>
+    </form>
+
+    <!-- Loading -->
+    <div id="loading" style="display: none;">Thinking<span id="dots">.</span></div>
+
+    <!-- Output Area -->
+    {% if plan %}
+      <h2>Generated Plan</h2>
+      <pre id="output">{{ plan }}</pre>
+      <button type="button" id="copy-btn">Copy to Clipboard</button>
+      <button type="button" id="download-btn">Download as JSON</button>
+    {% elif error %}
+      <p class="error">Error: {{ error }}</p>
+    {% endif %}
+  </main>
+
+  <!-- JavaScript Logic -->
+  <script src="/static/js/app.js"></script>
 </body>
 </html>
