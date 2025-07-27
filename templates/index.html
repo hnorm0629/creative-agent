@@ -38,9 +38,11 @@
       <!-- File upload block -->
       <section id="file-input-block" style="display: none;">
         <input type="file" id="file" name="file" accept="image/*,video/*">
-        <div class="preview-block">
-          <img id="preview-img" style="display: none;">
-          <video id="preview-video" controls style="display: none;"></video>
+        <div id="image-preview" style="margin-top: 1rem;">
+          <img id="preview-img" src="" alt="Preview" style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;"></img>
+        </div>
+        <div id="video-preview" style="margin-top: 1rem;"> <!-- ADDED -->
+          <video id="preview-video" controls style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;"></video>
         </div>
       </section>
 
@@ -53,7 +55,7 @@
     </form>
 
     <!-- Loading -->
-    <div id="loading" style="display: none;">Thinking<span id="dots">.</span></div>
+    <div id="loading" style="display: none; margin-top: 1rem;">Thinking<span id="dots">.</span></div>
 
     <!-- Output Area -->
     {% if plan %}

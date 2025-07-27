@@ -49,6 +49,19 @@ function syntaxHighlight(json) {
   });
 }
 
+function isValidInput() {
+  const type = inputTypeSelect.value;
+  const hasText = inputField && inputField.value.trim().length > 0;
+  const hasFile = fileInput && fileInput.files.length > 0;
+  return type === "text" ? hasText : hasFile;
+}
+
+function updateSubmitButtonState() {
+  const valid = isValidInput();
+  genBtn.disabled = !valid;
+  genBtn.classList.toggle("disabled", !valid);
+}
+
 // ================================
 // Input Type Toggle
 // ================================
@@ -66,6 +79,7 @@ function toggleInputType() {
     surpriseBtn.style.display = "none";
     clearBtn.style.display = "none";
   }
+  updateSubmitButtonState(); // revalidate when switching types
 }
 
 // ================================
@@ -88,6 +102,7 @@ function handleFilePreview(event) {
     }
   };
   reader.readAsDataURL(file);
+  updateSubmitButtonState(); // update after file is chosen
 }
 
 // ================================
@@ -103,6 +118,7 @@ async function fetchSurpriseBrief() {
     inputField.value = data.brief;
     robotIcon.classList.add("robot-surprise");
     setTimeout(() => robotIcon.classList.remove("robot-surprise"), 600);
+    updateSubmitButtonState();
   } catch (err) {
     alert("Failed to load surprise brief!");
     console.error(err);
@@ -172,6 +188,7 @@ async function handleFormSubmit(e) {
     setButtonsDisabled(false);
     clearInterval(window.loadingInterval);
     document.getElementById('loading').style.display = 'none';
+    updateSubmitButtonState(); // safety net
   }
 }
 
@@ -259,7 +276,10 @@ function setupEventListeners() {
   clearBtn?.addEventListener("click", () => {
     inputField.value = "";
     clearOutput();
+    updateSubmitButtonState();
   });
+  inputField?.addEventListener("input", updateSubmitButtonState);
+  fileInput?.addEventListener("change", updateSubmitButtonState);
   genBtn?.addEventListener("mouseenter", () => robotIcon.classList.add("robot-hover-animate"));
   genBtn?.addEventListener("mouseleave", () => robotIcon.classList.remove("robot-hover-animate"));
   robotIcon?.addEventListener("click", () => {
@@ -272,6 +292,7 @@ function setupEventListeners() {
     }
   });
   setInterval(rotatePlaceholder, 5000);
+  updateSubmitButtonState(); // run once on load
 }
 
 // Kickstart setup
