@@ -67,6 +67,8 @@ function updateSubmitButtonState() {
 // ================================
 
 function toggleInputType() {
+  clearOutput();
+
   const type = inputTypeSelect.value;
   if (type === "text") {
     textInputBlock.style.display = "block";
@@ -110,7 +112,9 @@ function handleFilePreview(event) {
 // ================================
 
 async function fetchSurpriseBrief() {
+  clearOutput();
   setButtonsDisabled(true);
+  
   surpriseBtn.textContent = "Loading...";
   try {
     const res = await fetch('/surprise');
@@ -133,8 +137,10 @@ async function fetchSurpriseBrief() {
 // ================================
 
 async function handleFormSubmit(e) {
+  clearOutput();
   e.preventDefault();
   setButtonsDisabled(true);
+
   document.getElementById('loading').style.display = 'block';
   const dotsEl = document.getElementById('dots');
   let dotCount = 1;

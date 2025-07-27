@@ -9,7 +9,7 @@ Framework: FastAPI | Language: Python 3.13.3
 
 Creative Agent is a FastAPI-based application that transforms creative briefs into detailed, structured video plans for short-form content. Designed for GTV's internal creative workflows, it generates vivid, unconventional concepts using large language models (LLMs) via a multi-step prompt-chaining pipeline.
 
-The app includes both a web UI and JSON API, and supports media input (image or video) for richer brief generation.
+The app includes both a web UI and JSON API, and supports media input (image or video) for richer brief generation. End-to-end, the final creative video plan typically takes 30-60s to generate.
 
 ## 🌐 Web UI
 
