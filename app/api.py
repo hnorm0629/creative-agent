@@ -6,6 +6,7 @@ from app.models import PlanRequest, CreativePlan
 from app.planner.core import plan_from_brief
 from app.planner.llm_openai import generate_surprise_brief
 from app.planner.image_captioning import caption_image
+from app.planner.video_captioning import caption_video
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ async def generate_plan(request: PlanRequest):
 @router.post("/plans/from-image", response_model=CreativePlan)
 async def create_plan_from_image(file: UploadFile = File(...)):
     try:
-        # Step 1: Read file contents
+        # Step 1: Read file contentscaption_video
         contents = await file.read()
         logger.info(f"Received image upload: {file.filename}, size: {len(contents)} bytes")
 
@@ -35,6 +36,22 @@ async def create_plan_from_image(file: UploadFile = File(...)):
     except Exception as e:
         logger.exception("Error generating creative plan from image")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/plans/from-video", response_model=CreativePlan)
+async def create_plan_from_video(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        logger.info(f"Received video upload: {file.filename}, size: {len(contents)} bytes")
+
+        brief = await caption_video(contents)
+        logger.info("Generated caption from video: %s", brief)
+
+        plan = await plan_from_brief(brief)
+        return plan
+    except Exception as e:
+        logger.exception("Error generating creative plan from video")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/surprise")
 async def get_surprise_brief():

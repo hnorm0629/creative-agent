@@ -16,8 +16,7 @@
       <label for="input-type" style="margin-right: 0.5rem;">Input Type:</label>
       <select id="input-type">
         <option value="text" selected>Text</option>
-        <option value="image">Image</option>
-        <option value="video" disabled>Video (coming soon)</option>
+        <option value="media">Image or Video</option>
       </select>
     </div>
   </div>
@@ -30,9 +29,12 @@
   
     <!-- File upload block (initially hidden) -->
     <div id="file-input-block" style="display: none;">
-      <input type="file" id="file" name="file" accept="image/*">
+      <input type="file" id="file" name="file" accept="image/*,video/*">
       <div id="image-preview" style="margin-top: 1rem;">
         <img id="preview-img" src="" alt="Preview" style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;">
+      </div>
+      <div id="video-preview" style="margin-top: 1rem;"> <!-- ADDED -->
+        <video id="preview-video" controls style="max-width: 300px; display: none; border: 1px solid #ccc; border-radius: 8px;"></video>
       </div>
     </div>
 
@@ -91,7 +93,7 @@
         fileInputBlock.style.display = "none";
         document.getElementById('surprise-btn').style.display = "inline-block";
         document.getElementById('clear-btn').style.display = "inline-block";
-      } else if (type === "image" || type === "video") {
+      } else if (type === "media") {
         textInputBlock.style.display = "none";
         fileInputBlock.style.display = "block";
         document.getElementById('surprise-btn').style.display = "none";
@@ -101,20 +103,27 @@
 
     const fileInput = document.getElementById("file");
     const previewImg = document.getElementById("preview-img");
+    const previewVideo = document.getElementById("preview-video");
 
     fileInput?.addEventListener("change", (event) => {
       const file = event.target.files[0];
-      if (file && file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
+      if (!file) return;
+
+      // Hide both previews initially
+      previewImg.style.display = "none";
+      previewVideo.style.display = "none";
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        if (file.type.startsWith("image/")) {
           previewImg.src = e.target.result;
           previewImg.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      } else {
-        previewImg.src = "";
-        previewImg.style.display = "none";
-      }
+        } else if (file.type.startsWith("video/")) {
+          previewVideo.src = e.target.result;
+          previewVideo.style.display = "block";
+        }
+      };
+      reader.readAsDataURL(file);
     });
 
     // Surprise Me button handler
@@ -195,14 +204,15 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ input: text }),
           });
-        } else if (inputType === 'image') {
+        } else if (inputType === 'media') {
           const file = document.getElementById('file').files[0];
           if (!file) throw new Error('No file selected.');
 
           const formData = new FormData();
           formData.append('file', file);
 
-          response = await fetch('/plans/from-image', {
+          const endpoint = inputType === 'image' ? '/plans/from-image' : '/plans/from-video'; // CHANGED
+          response = await fetch(endpoint, {
             method: 'POST',
             body: formData,
           });
