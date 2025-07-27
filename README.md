@@ -120,16 +120,12 @@ curl -X POST http://localhost:8000/plans \
 ### 🖼️ Image Upload
 ```bash
 curl -X POST http://localhost:8000/plans/from-image \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@your_image.jpg"
+  -F "file=@your_image.png"
 ```
 
 ### 🎥 Video Upload
 ```bash
 curl -X POST http://localhost:8000/plans/from-video \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
   -F "file=@your_clip.mp4"
 ```
 
