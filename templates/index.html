@@ -246,7 +246,15 @@
         const copyBtn = document.createElement('button');
         copyBtn.textContent = "Copy to Clipboard";
         copyBtn.id = "copy-btn";
-        copyBtn.onclick = () => navigator.clipboard.writeText(pre.textContent);
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(pre.textContent).then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = "✅ Copied!";
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+            }, 1200);
+          });
+        };
 
         const downloadBtn = document.createElement('button');
         downloadBtn.textContent = "Download as JSON";
