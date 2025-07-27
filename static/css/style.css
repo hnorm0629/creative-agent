@@ -4,6 +4,12 @@
   --accent: #d27aff; /* define accent color here */
 }
 
+/* Custom text selection color */
+::selection {
+  background: #d27aff; /* Your purple */
+  color: white;
+}
+
 body {
   background-color: #000;
   color: #fff;
@@ -24,11 +30,17 @@ h1:hover, h2:hover {
 
 textarea {
   width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  resize: none; /* disables user dragging */
   background-color: #111;
   color: #fff;
   border: 1px solid #444;
+  border-radius: 0.5rem;
   padding: 1rem;
   font-size: 1rem;
+  line-height: 1.4;
 }
 
 .button-row {
