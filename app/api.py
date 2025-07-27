@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/plans", response_model=CreativePlan)
 async def generate_plan(request: PlanRequest):
     try:
-        plan = await plan_from_brief(request.input)
+        plan = await plan_from_brief(request.input)   # Switch to prompt-chaining
         return plan
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

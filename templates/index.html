@@ -122,6 +122,19 @@
         dotsEl.textContent = '.'.repeat(dotCount);
       }, 500);
     });
+
+    function clearError() {
+      const errorEl = document.getElementById('error-message');
+      if (errorEl) {
+        errorEl.remove(); // or: errorEl.style.display = "none";
+      }
+    }
+
+    // Attach to all interactive buttons
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', clearError);
+    });
   </script>
 </body>
 </html>

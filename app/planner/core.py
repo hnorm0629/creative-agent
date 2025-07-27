@@ -4,14 +4,26 @@ import asyncio
 from app.logger import logger
 from app.models import CreativePlan
 from app.planner.prompts import creative_plan_prompt
+from app.planner.prompt_chain import creative_plan_chained_prompt
 from app.planner.llm_gemini import generate_creative_response
 from pydantic import ValidationError
 
-async def plan_from_brief(user_input: str) -> CreativePlan:
-    prompt = creative_plan_prompt(user_input)
-    logger.info("Generated prompt:\n%s", prompt)
+USE_CHAINING = True
 
+async def plan_from_brief(user_input: str) -> CreativePlan:
+    mode = "chain" if USE_CHAINING else "single"
+    logger.info(f"Planning mode selected: {mode!r}")
+
+    if USE_CHAINING:
+        logger.info("Using prompt-chaining planner...")
+        prompt = await creative_plan_chained_prompt(user_input)
+    else:
+        logger.info("Using single-shot prompt planner...")
+        prompt = creative_plan_prompt(user_input)
+
+    logger.info("Generated prompt:\n%s", prompt)
     response_text = await generate_creative_response(prompt)
+
     logger.info("Raw LLM response:\n%s", response_text)
 
     clean_text = re.sub(r"^```json\n|\n```$", "", response_text.strip())
