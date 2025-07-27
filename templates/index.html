@@ -24,7 +24,7 @@
   <form method="post" id="creative-form" enctype="multipart/form-data">
     <!-- Text input block -->
     <div id="text-input-block">
-      <p style="margin-bottom: 0.25rem; font-size: 0.95rem; color: #ccc;">
+      <p style="margin-bottom: 0.25rem; font-size: 0.95rem; color: #fff;">
         Enter your creative brief:
       </p>
       <textarea name="input" id="input" rows="5" placeholder="">{{ input or '' }}</textarea>
@@ -139,6 +139,9 @@
         const res = await fetch('/surprise');
         const data = await res.json();
         document.getElementById('input').value = data.brief;
+
+        robot.classList.add("robot-surprise");
+        setTimeout(() => robot.classList.remove("robot-surprise"), 600);
       } catch (err) {
         alert("Failed to load surprise brief!");
         console.error(err);

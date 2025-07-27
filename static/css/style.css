@@ -90,3 +90,26 @@ pre {
 .robot-hover-animate {
   animation: glow-jiggle-loop 2s ease-in-out infinite;
 }
+
+@keyframes surprise-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 0px var(--accent));
+  }
+  20% {
+    transform: scale(1.15) rotate(3deg);
+    filter: drop-shadow(0 0 6px var(--accent));
+  }
+  50% {
+    transform: scale(0.98) rotate(-3deg);
+    filter: drop-shadow(0 0 10px var(--accent));
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 0px var(--accent));
+  }
+}
+
+.robot-surprise {
+  animation: surprise-pop 0.6s ease-in-out;
+}
