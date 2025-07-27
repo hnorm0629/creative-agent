@@ -171,7 +171,16 @@
 
         // Generate timestamp
         const now = new Date();
-        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        const pad = (n) => n.toString().padStart(2, '0');
+
+        const year = now.getFullYear();
+        const month = pad(now.getMonth() + 1); // Months are 0-indexed
+        const day = pad(now.getDate());
+        const hours = pad(now.getHours());
+        const minutes = pad(now.getMinutes());
+        const seconds = pad(now.getSeconds());
+
+        const timestamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
         const filename = `creative_plan_${timestamp}.json`;
 
         const link = document.createElement('a');
@@ -225,6 +234,7 @@
         }
 
         const plan = await response.json();
+        window.rawJsonPlan = plan;
 
         if (!response.ok) {
           throw new Error(plan.detail || "Unknown error");
@@ -239,7 +249,11 @@
         // Display new output
         const pre = document.createElement('pre');
         pre.id = 'output';
-        pre.textContent = JSON.stringify(plan, null, 2);
+
+        const code = document.createElement('code');
+        code.innerHTML = syntaxHighlight(plan); // ← keep the highlighting
+        pre.appendChild(code);
+
         document.body.appendChild(document.createElement('h2')).textContent = "Generated Plan";
         document.body.appendChild(pre);
 
@@ -247,7 +261,8 @@
         copyBtn.textContent = "Copy to Clipboard";
         copyBtn.id = "copy-btn";
         copyBtn.onclick = () => {
-          navigator.clipboard.writeText(pre.textContent).then(() => {
+          const jsonString = JSON.stringify(window.rawJsonPlan, null, 2);
+          navigator.clipboard.writeText(jsonString).then(() => {
             const originalText = copyBtn.textContent;
             copyBtn.textContent = "✅ Copied!";
             setTimeout(() => {
@@ -260,13 +275,22 @@
         downloadBtn.textContent = "Download as JSON";
         downloadBtn.id = "download-btn";
         downloadBtn.onclick = () => {
-          const blob = new Blob([pre.textContent], { type: 'application/json' });
+          const jsonString = JSON.stringify(window.rawJsonPlan, null, 2);
+          const blob = new Blob([jsonString], { type: 'application/json' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
           a.download = `creative_plan_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
           a.click();
           URL.revokeObjectURL(url);
+
+          navigator.clipboard.writeText(pre.textContent).then(() => {
+            const originalText = downloadBtn.textContent;
+            downloadBtn.textContent = "✅ Downloaded!";
+            setTimeout(() => {
+              downloadBtn.textContent = originalText;
+            }, 1200);
+          });
         };
         
         const buttonRow = document.createElement('div');
@@ -340,6 +364,61 @@
 
     rotatePlaceholder();
     setInterval(rotatePlaceholder, 5000); // rotate every 4 seconds
+
+    function syntaxHighlight(json) {
+      if (typeof json != "string") {
+        json = JSON.stringify(json, null, 2);
+      }
+
+      json = json
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      return json.replace(
+        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?)/g,
+        (match) => {
+          let cls = "json-number";
+
+          if (/^"/.test(match)) {
+            const isKey = /:$/.test(match);
+
+            if (isKey) {
+              cls = "json-key";
+
+              // Extract the key name (strip quotes and colon)
+              const keyName = match.replace(/"|:|/g, "").toLowerCase();
+
+              // Add emojis for specific keys
+              let emoji = "";
+              if (keyName === "title") emoji = "🏷️ ";
+              else if (keyName === "concept_summary") emoji = "🧠 ";
+              else if (keyName === "hook") emoji = "🎯 ";
+              else if (keyName === "visual_style") emoji = "🎨 ";
+              else if (keyName === "tone") emoji = "🎭 ";
+              else if (keyName === "intended_platform") emoji = "📱 ";
+              else if (keyName === "audience") emoji = "👥 ";
+              else if (keyName === "scene_ideas") emoji = "🎬 ";
+              else if (keyName === "characters") emoji = "🧍‍♂️ ";
+              else if (keyName === "inspirations") emoji = "🌟 ";
+              else if (keyName === "dialogue_ideas") emoji = "💬 ";
+              else if (keyName === "soundtrack_style") emoji = "🎧 ";
+              else if (keyName === "foley_fx") emoji = "🔊 ";
+
+              return `<span class="${cls}">${emoji}${match}</span>`;
+            } else {
+              cls = "json-string";
+            }
+          } else if (/true|false/.test(match)) {
+            cls = "json-boolean";
+          } else if (/null/.test(match)) {
+            cls = "json-boolean";
+          }
+
+          return `<span class="${cls}">${match}</span>`;
+        }
+      );
+    }
   </script>
 </body>
 </html>

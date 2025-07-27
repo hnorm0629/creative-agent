@@ -63,10 +63,38 @@ pre {
   background-color: #111;
   padding: 1rem;
   border: 1px solid #444;
+  border-radius: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
   white-space: pre-wrap;
   word-wrap: break-word;
   margin-top: 1rem;
+  color: #fff;
+  max-height: 500px;
+  overflow: auto;
+  box-shadow: 0 0 10px rgba(210, 122, 255, 0.1); /* subtle purple glow */
+  transition: box-shadow 0.3s ease;
 }
+
+pre code {
+  display: block;
+  line-height: 1.4;
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+}
+
+pre:hover {
+  box-shadow: 0 0 14px rgba(210, 122, 255, 0.3);
+}
+
+.json-key {
+  color: #d27aff; /* purple for keys */
+}
+
+.json-string {
+  color: #fff; /* mint for string values */
+}
+
 
 .error {
   color: #ff5252;
