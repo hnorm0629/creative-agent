@@ -7,12 +7,13 @@ from pydantic import ValidationError
 
 from app.logger import logger
 from app.models import CreativePlan
-from app.planner.prompt_template import creative_plan_prompt
+from app.planner.prompt_template import creative_plan_prompt, creative_plan_trends_prompt
 from app.planner.prompt_chain import creative_plan_chained_prompt
 from app.planner.llm_gemini import generate_creative_response
 
 # Controls whether to use single-step or multi-step prompt generation
 USE_CHAINING_MODE = True
+USE_TRENDS_MODE = False
 
 async def plan_from_brief(user_input: str) -> CreativePlan:
     """
@@ -28,8 +29,12 @@ async def plan_from_brief(user_input: str) -> CreativePlan:
         logger.info("Using prompt-chaining planner...")
         prompt = await creative_plan_chained_prompt(user_input)
     else:
-        logger.info("Using single-shot prompt planner...")
-        prompt = creative_plan_prompt(user_input)
+        if USE_TRENDS_MODE:
+            logger.info("Using single-shot, trend-informed prompt planner...")
+            prompt = creative_plan_trends_prompt(user_input)
+        else:
+            logger.info("Using single-shot prompt planner...")
+            prompt = creative_plan_prompt(user_input)
 
     logger.info("Generated prompt:\n%s", prompt)
 
